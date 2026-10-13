@@ -1,0 +1,22 @@
+<%- include("partials/header", { title }) %>
+<section class="form-page">
+  <a href="/" class="back-link">← Back to collection</a>
+  <div class="form-intro"><span class="eyebrow muted"><%= mode === "new" ? "MAKE ROOM FOR A NEW STORY" : "UPDATE YOUR SHELF" %></span><h1><%= mode === "new" ? "Add a new book" : "Edit this book" %><span class="heading-period">.</span></h1><p>Every great collection starts one story at a time.</p></div>
+  <form class="book-form" method="post" action="<%= mode === 'new' ? '/books' : '/books/' + book._id %>">
+    <div class="form-row">
+      <label>Book title <span>*</span><input name="title" required maxlength="140" value="<%= book.title || '' %>" placeholder="e.g. The Midnight Library"></label>
+      <label>Author <span>*</span><input name="author" required maxlength="100" value="<%= book.author || '' %>" placeholder="e.g. Matt Haig"></label>
+    </div>
+    <div class="form-row">
+      <label>Genre <span>*</span><input name="genre" required maxlength="60" list="genres" value="<%= book.genre || '' %>" placeholder="e.g. Fiction"><datalist id="genres"><option>Literary Fiction</option><option>Mystery</option><option>Romance</option><option>Adventure</option><option>Science Fiction</option><option>Personal Growth</option><option>Fantasy</option><option>Biography</option></datalist></label>
+      <label>Price (₹) <span>*</span><input name="price" type="number" min="0" step="0.01" required value="<%= book.price ?? '' %>" placeholder="399"></label>
+    </div>
+    <div class="form-row">
+      <label>Reading status<select name="status"><% ["Available","Reading","Wishlist"].forEach(s => { %><option value="<%= s %>" <%= (book.status || "Available") === s ? "selected" : "" %>><%= s %></option><% }) %></select></label>
+      <label>Cover image URL <small>(optional)</small><input name="cover" type="url" value="<%= book.cover || '' %>" placeholder="https://..."></label>
+    </div>
+    <label>Short description <small>(optional)</small><textarea name="description" rows="4" maxlength="1200" placeholder="What makes this book special?"><%= book.description || '' %></textarea></label>
+    <div class="form-actions"><a class="button button-outline" href="/">Cancel</a><button class="button button-dark" type="submit"><%= mode === "new" ? "Add to my shelf" : "Save changes" %> <span>↗</span></button></div>
+  </form>
+</section>
+<%- include("partials/footer") %>

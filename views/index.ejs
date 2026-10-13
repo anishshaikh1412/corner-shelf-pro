@@ -1,0 +1,62 @@
+<%- include("partials/header", { title }) %>
+<section class="hero">
+  <div class="hero-copy">
+    <span class="eyebrow"><span class="eyebrow-dot"></span> YOUR SPACE, YOUR STORIES</span>
+    <h1>Every book has<br>its <em>own little place.</em></h1>
+    <p>A thoughtful home for the stories you love, the ones you're reading, and the ones waiting for you.</p>
+    <a class="button button-light" href="/books/new">＋ Add to your shelf <span aria-hidden="true">↗</span></a>
+  </div>
+  <div class="hero-art" aria-hidden="true">
+    <div class="sun"></div><div class="plant plant-one"></div><div class="plant plant-two"></div>
+    <div class="book-stack">
+      <div class="book book-1"><span>THE ART OF<br>SLOW LIVING</span><small>ANNA JAMES</small></div>
+      <div class="book book-2"><span>WILD<br>PLACES</span><small>FIELD NOTES</small></div>
+      <div class="book book-3"><span>THE QUIET<br>HOURS</span><small>SELECTED STORIES</small></div>
+      <div class="book book-4"><span>GROW<br>THROUGH IT</span></div>
+    </div>
+    <div class="hero-caption">A collection of your own <span>✳</span></div>
+  </div>
+  <div class="hero-grain"></div>
+</section>
+
+<section class="stats-grid" aria-label="Collection summary">
+  <article class="stat-card"><span class="stat-icon">▤</span><div><span class="stat-label">BOOKS ON YOUR SHELF</span><strong><%= stats.total %></strong><small>Every story counts</small></div></article>
+  <article class="stat-card"><span class="stat-icon">◈</span><div><span class="stat-label">COLLECTION VALUE</span><strong>₹<%= stats.value.toLocaleString("en-IN") %></strong><small>Your library, valued</small></div></article>
+  <article class="stat-card"><span class="stat-icon">✳</span><div><span class="stat-label">GENRES EXPLORED</span><strong><%= stats.genres %></strong><small>A world of perspectives</small></div></article>
+  <article class="stat-card"><span class="stat-icon">◷</span><div><span class="stat-label">CURRENTLY READING</span><strong><%= stats.reading %></strong><small>Stories in progress</small></div></article>
+</section>
+
+<section class="collection-section">
+  <div class="section-heading">
+    <div><span class="eyebrow muted">THE GOOD PART</span><h2>Your collection<span class="heading-period">.</span></h2><p>Keep your favourite reads close at hand.</p></div>
+    <a class="text-link" href="/books/new">Add a new book <span>↗</span></a>
+  </div>
+  <form class="filters" method="get" action="/">
+    <label class="searchbox"><span>⌕</span><input type="search" name="search" value="<%= search %>" placeholder="Search titles or authors..." aria-label="Search titles or authors"></label>
+    <label class="select-wrap"><span class="sr-only">Filter by genre</span><select name="genre" onchange="this.form.submit()"><option value="">All genres</option><% genres.forEach(g => { %><option value="<%= g %>" <%= selectedGenre === g ? "selected" : "" %>><%= g %></option><% }) %></select><span>⌄</span></label>
+    <label class="select-wrap sort-select"><span class="sr-only">Sort books</span><select name="sort" onchange="this.form.submit()"><option value="newest" <%= sort==="newest"?"selected":"" %>>Recently added</option><option value="title" <%= sort==="title"?"selected":"" %>>Title A–Z</option><option value="price-low" <%= sort==="price-low"?"selected":"" %>>Price: low to high</option><option value="price-high" <%= sort==="price-high"?"selected":"" %>>Price: high to low</option></select><span>⌄</span></label>
+    <button class="button button-dark filter-submit" type="submit">Search</button>
+  </form>
+  <div class="results-line"><span><strong><%= books.length %></strong> <%= books.length === 1 ? "book" : "books" %> found</span><% if (search || selectedGenre) { %><a href="/">Clear filters ×</a><% } %></div>
+
+  <% if (books.length) { %>
+  <div class="book-grid">
+    <% books.forEach((book, i) => { %>
+      <article class="book-card">
+        <div class="cover-wrap">
+          <% if (book.cover) { %><img class="cover-image" src="<%= book.cover %>" alt="Cover of <%= book.title %>" loading="lazy"><% } else { %>
+          <div class="cover-placeholder cover-tone-<%= i % 6 %>"><span class="cover-mini">CORNER SHELF · <%= book.genre.toUpperCase() %></span><span class="cover-title"><%= book.title %></span><span class="cover-author"><%= book.author %></span><span class="cover-ornament">✳</span></div>
+          <% } %>
+          <span class="status-badge <%= book.status.toLowerCase().replace(" ", "-") %>"><%= book.status %></span>
+          <div class="cover-actions"><a href="/books/<%= book._id %>/edit" aria-label="Edit <%= book.title %>">Edit ↗</a></div>
+        </div>
+        <div class="book-info"><span class="book-genre"><%= book.genre %></span><h3><%= book.title %></h3><p class="book-author">by <%= book.author %></p><div class="book-card-bottom"><strong>₹<%= Number(book.price).toLocaleString("en-IN") %></strong><form method="post" action="/books/<%= book._id %>/delete" onsubmit="return confirm('Remove this book from your collection?')"><button class="icon-button" type="submit" aria-label="Delete <%= book.title %>" title="Delete book">⌫</button></form></div></div>
+      </article>
+    <% }) %>
+  </div>
+  <% } else { %>
+    <div class="empty-state"><div class="empty-icon">▤</div><h3>No books on this page yet.</h3><p>Try another search, or add the first book to your collection.</p><a class="button button-dark" href="/books/new">Add your first book</a></div>
+  <% } %>
+</section>
+<section class="quote-banner"><span class="quote-mark">“</span><div><p>A room without books is like a body without a soul.</p><small>— A little reminder to keep reading</small></div><span class="quote-leaf">✳</span></section>
+<%- include("partials/footer") %>
